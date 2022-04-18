@@ -24,8 +24,40 @@ oc new-app \
   -e MONGO_USER=user \
   -e MONGO_PASS=pass \
   -e MONGO_DB_NAME=BookStore \
-  -e MONGO_DB_COLLECTION=Books
+  -e MONGO_DB_COLLECTION=Books \
+  -n bookstore
 
+# Labels
+oc label deploy book-store \
+  app.kubernetes.io/part-of=book-store \
+  app.openshift.io/runtime=dotnet \
+  -n bookstore
+
+# Annotations
+oc annotate deploy book-store app.openshift.io/connects-to='[{"apiVersion":"apps/v1","kind":"Deployment","name":"book-store-mongodb"}]' -n bookstore
+
+
+# Expose service
+oc expose svc book-store -n bookstore
+```
+
+- Test App:
+```sh
+# Get URL
+export APP_URL=$(oc get route book-store -o jsonpath='{.spec.host}' -n bookstore)
+
+# Create two Books
+curl http://$APP_URL/api/books \
+  -X POST \
+  -d '{"bookName": "The Lord of the Rings. The Fellowship of the Ring","price": 43.15,"category": "Fantasy","author": "J. R. R. Tolkien"}' \
+  -H "Content-Type: application/json"
+curl http://$APP_URL/api/books \
+  -X POST \
+  -d '{"bookName": "The Accursed Legions","price": 25.30,"category": "Historical","author": "Santiago Posteguillo"}' \
+  -H "Content-Type: application/json"
+
+# Retrieve Books
+curl http://$APP_URL/api/books
 ```
 
 
