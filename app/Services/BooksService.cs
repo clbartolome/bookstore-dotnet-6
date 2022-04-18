@@ -1,6 +1,7 @@
 using BookStoreApi.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System;
 
 namespace BookStoreApi.Services;
 
@@ -8,17 +9,23 @@ public class BooksService
 {
     private readonly IMongoCollection<Book> _booksCollection;
 
-    public BooksService(
-        IOptions<BookStoreDatabaseSettings> bookStoreDatabaseSettings)
+    public BooksService()
     {
-        var mongoClient = new MongoClient(
-            bookStoreDatabaseSettings.Value.ConnectionString);
+        // Get Database Connection settings from environment variables
+        var mongoHost = Environment.GetEnvironmentVariable("MONGO_HOST");
+        var mongoPort = Environment.GetEnvironmentVariable("MONGO_PORT");
+        var mongoUser = Environment.GetEnvironmentVariable("MONGO_USER");
+        var mongoPass = Environment.GetEnvironmentVariable("MONGO_PASS");
+        var mongoDbName = Environment.GetEnvironmentVariable("MONGO_DB_NAME");
+        var mongoDbCollection = Environment.GetEnvironmentVariable("MONGO_DB_COLLECTION");
 
-        var mongoDatabase = mongoClient.GetDatabase(
-            bookStoreDatabaseSettings.Value.DatabaseName);
+        var connectionString = $"mongodb://{mongoUser}:{mongoPass}@{mongoHost}:{mongoPort}";
 
-        _booksCollection = mongoDatabase.GetCollection<Book>(
-            bookStoreDatabaseSettings.Value.BooksCollectionName);
+        var mongoClient = new MongoClient(connectionString);
+
+        var mongoDatabase = mongoClient.GetDatabase(mongoDbName);
+
+        _booksCollection = mongoDatabase.GetCollection<Book>(mongoDbCollection);
     }
 
     public async Task<List<Book>> GetAsync() =>
