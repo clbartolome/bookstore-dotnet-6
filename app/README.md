@@ -22,7 +22,7 @@ podman run -d \
   mongo
 
 # Create database
-podman cp ./mongo-data.js mongo-bookstore:/                                                                                                                   125 ✘  10:59:43 
+podman cp ./mongo-data.js mongo-bookstore:/
 podman exec mongo-bookstore sh -c "mongosh -u admin -p pass < /mongo-data.js"
 
 # Setup configuration
