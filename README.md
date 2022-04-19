@@ -1,6 +1,36 @@
 # bookstore-dotnet-6
 Bookstore project using .Net Core or 6.
 
+## GitOps
+
+### Configure CICD environment
+
+- Create CICD resources namespace: `oc new-project cicd-resources`
+
+- Install ArgoCD operator:
+
+  Follow [this instructions](https://docs.openshift.com/container-platform/4.8/cicd/gitops/installing-openshift-gitops.html).
+  Retrieve the user 'admin' password:
+  ```sh
+  oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d
+  ```
+  Retrieve ArgoCD URL:
+  ```sh
+  oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops
+  ```
+
+- Install nexus: 
+  ```sh
+  # Apply resources
+  oc apply -f cicd-resources/nexus.yaml -n cicd-resources
+  # Get route (admin/admin123)
+  oc get route nexus -o jsonpath='{.spec.host}' -n cicd-resources
+  ```
+
+
+
+
+
 ## OpenShift simple deployment
 
 - Create a namespace: `oc new-project bookstore`
