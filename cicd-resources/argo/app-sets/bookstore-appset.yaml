@@ -23,5 +23,5 @@ spec:
         namespace: '{{ k8s_cluster.namespace }}'
       syncPolicy:
         automated:
-          prune: '{{ argo_config.prune }}'
-          selfHeal: '{{ argo_config.selfHeal }}'
+          prune: true
+          selfHeal: true
