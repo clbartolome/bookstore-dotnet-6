@@ -3,7 +3,6 @@
   "environment": "dev",
   "argo_config": {
     "branch": "main",
-    "prune": true,
     "selfHeal": true
   },
   "k8s_cluster": {
