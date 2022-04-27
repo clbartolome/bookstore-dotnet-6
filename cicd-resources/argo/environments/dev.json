@@ -1,8 +1,10 @@
 {
-  "tenant": {
-    "owner": "calopezb@redhat.com",
-    "name": "Book Store DEV",
-    "id": "dev"
+  "owner": "calopezb@redhat.com",
+  "environment": "dev",
+  "argo_config": {
+    "branch": "main",
+    "prune": true,
+    "selfHeal": true
   },
   "k8s_cluster": {
     "owner": "admin@redhat.com",
