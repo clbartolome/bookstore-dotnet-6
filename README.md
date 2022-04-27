@@ -5,40 +5,68 @@ Bookstore project using .Net Core or 6.
 
 ### Configure CICD environment
 
-- Create CICD resources namespace: `oc new-project cicd-resources`
-
-- Install ArgoCD operator:
-
-  Follow [this instructions](https://docs.openshift.com/container-platform/4.8/cicd/gitops/installing-openshift-gitops.html).
-  Retrieve the user 'admin' password:
+- Create namespace for CICD resources: 
   ```sh
-  oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d
-  ```
-  Retrieve ArgoCD URL:
-  ```sh
-  oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops
+  # CICD Resources
+  oc new-project cicd-resources
   ```
 
-- Install nexus: 
+- Configure Pipelines:
+  ```sh
+  # Configure policies
+  oc policy add-role-to-user edit system:serviceaccount:$cicd-resources:pipeline -n book-store-dev
+  oc policy add-role-to-user edit system:serviceaccount:cicd-resources:pipeline -n book-store-prod
+  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-dev:default -n cicd-resources
+  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-prod:default -n cicd-resources
+
+  # Add dotnet 6 is for S2I process
+  oc apply -f https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore/master/dotnet_imagestreams.json -n openshift
+  ```
+
+- Install Nexus and deploy mongo helm chart: 
   ```sh
   # Apply resources
   oc apply -f cicd-resources/nexus.yaml -n cicd-resources
-  # Get route (admin/admin123)
-  oc get route nexus -o jsonpath='{.spec.host}' -n cicd-resources
+  # Get route (pass in /nexus-data/admin.password)
+  export NEXUS_URL=$(oc get route nexus -o jsonpath='{.spec.host}' -n cicd-resources)
+  # Access nexus with admin password and change it to admin123
+
+  # Create nexus repository for helm charts if needed
+  curl http://$NEXUS_URL/service/rest/v1/repositories/helm/hosted \
+  -u admin:admin123 \
+  -X POST \
+  -d '{"name":"helm","online":true,"storage":{"blobStoreName":"default","strictContentTypeValidation":true,"writePolicy":"allow_once"},"cleanup":{"policyNames":["string"]},"component":{"proprietaryComponents":true}}  ' \
+  -H "Content-Type: application/json"
+
+  # Package heml chart
+  helm package mongodb/ --destination mongodb/charts
+
+  # Uplopad helm chart
+  curl -v -u admin:admin123 http://$NEXUS_URL/repository/helm/ --upload-file mongodb/charts/mongodb-1.0.0.tgz
   ```
 
+- Install ArgoCD Operator:
 
+  Follow [this instructions](https://docs.openshift.com/container-platform/4.8/cicd/gitops/installing-openshift-gitops.html).
 
+  Get URL and Password:
+  ```sh
+  # Get Password
+  oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d
+  # Get URL
+  oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops
 
+  # Apply argo CD cluster configuration (including application namespaces)
+  
+  ```
 
 ## OpenShift simple deployment
 
 - Create a namespace: `oc new-project bookstore`
-- Deploy a MongoDB database. Can use this helm chart:
+- Deploy a MongoDB database:
 ```sh
 # Open new terminal and clone this repository
-git clone git@github.com:clbartolome/helm-charts.git
-cd helm-charts/mongodb
+cd mongodb
 
 helm install book-store . --set-string credentials.username=user,credentials.userpassword=pass,openshiftApplicationName=book-store
 ```

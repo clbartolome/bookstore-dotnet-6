@@ -1,0 +1,58 @@
+---
+### dev namespace ###
+apiVersion: v1 
+kind: Namespace 
+metadata:
+  name: book-store-dev 
+  annotations: 
+    openshift.io/description: "Book Strore DEV environment" 
+    openshift.io/display-name: "Book Store DEV"
+  labels:
+    kubernetes.io/metadata.name: book-store-dev
+spec:
+  finalizers: 
+  - kubernetes
+---
+### dev rolebindind to allow argo CD create resources ###
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: RoleBinding
+metadata:
+  name: book-store-dev-role-binding
+  namespace: book-store-dev 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io 
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller 
+  namespace: openshift-gitops
+---
+### prod namespace ###
+apiVersion: v1 
+kind: Namespace 
+metadata:
+  name: book-store-prod 
+  annotations: 
+    openshift.io/description: "Book Strore PROD environment" 
+    openshift.io/display-name: "Book Store PROD"
+  labels:
+    kubernetes.io/metadata.name: book-store-prod
+spec:
+  finalizers: 
+  - kubernetes
+---
+### prod rolebindind to allow argo CD create resources ###
+apiVersion: rbac.authorization.k8s.io/v1 
+kind: RoleBinding
+metadata:
+  name: book-store-prod-role-binding
+  namespace: book-store-prod 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io 
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller 
+  namespace: openshift-gitops
