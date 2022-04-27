@@ -49,6 +49,9 @@ Bookstore project using .Net Core or 6.
 
   # Apply argo CD cluster configuration (including application namespaces)
   oc apply -f cicd-resources/argo/init.yaml
+
+  # Create Argo CD APP
+  oc apply -f cicd-resources/argo/bookstore.yaml
   
   ```
 
