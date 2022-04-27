@@ -2,7 +2,7 @@
   "owner": "calopezb@redhat.com",
   "environment": "prod",
   "argo_config": {
-    "branch": "main",
+    "branch": "master",
     "prune": true,
     "selfHeal": true
   },
