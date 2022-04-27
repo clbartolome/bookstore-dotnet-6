@@ -1,0 +1,12 @@
+{
+  "tenant": {
+    "owner": "calopezb@redhat.com",
+    "name": "Book Store PROD",
+    "id": "prod"
+  },
+  "k8s_cluster": {
+    "owner": "admin@redhat.com",
+    "address": "https://kubernetes.default.svc",
+    "namespace": "book-store-prod"
+  }
+}

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: book-store
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/clbartolome/bookstore-dotnet-6.git
+        revision: main
+        files:
+          - path: "cicd-resources/argo/environments/*.json"
+  template:
+    metadata:
+      name: '{{tenant.id}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/clbartolome/bookstore-dotnet-6.git
+        targetRevision: main
+        path: 'gitops/bookstore/overlays/{{tenant.id}}'
+      destination:
+        server: '{{k8s_cluster.address}}'
+        namespace: '{{k8s_cluster.namespace}}'
+       syncPolicy:
+        automated:
+          prune: true
+          syncOptions:
+          - PruneLast=true

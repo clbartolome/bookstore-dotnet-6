@@ -11,41 +11,32 @@ Bookstore project using .Net Core or 6.
   oc new-project cicd-resources
   ```
 
-- Configure Pipelines:
-  ```sh
-  # Configure policies
-  oc policy add-role-to-user edit system:serviceaccount:$cicd-resources:pipeline -n book-store-dev
-  oc policy add-role-to-user edit system:serviceaccount:cicd-resources:pipeline -n book-store-prod
-  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-dev:default -n cicd-resources
-  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-prod:default -n cicd-resources
-
-  # Add dotnet 6 is for S2I process
-  oc apply -f https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore/master/dotnet_imagestreams.json -n openshift
-  ```
-
 - Install Nexus and deploy mongo helm chart: 
   ```sh
   # Apply resources
   oc apply -f cicd-resources/nexus.yaml -n cicd-resources
   # Get route (pass in /nexus-data/admin.password)
   export NEXUS_URL=$(oc get route nexus -o jsonpath='{.spec.host}' -n cicd-resources)
-  # Access nexus with admin password and change it to admin123
+  # Wait until pod is running 
+  oc get pods -w -n cicd-resources
+
+  # Get admin Password
+  export NEXUS_PASS=$(oc exec deploy/nexus -- cat /nexus-data/admin.password)
 
   # Create nexus repository for helm charts if needed
-  curl http://$NEXUS_URL/service/rest/v1/repositories/helm/hosted \
-  -u admin:admin123 \
+  curl -v http://$NEXUS_URL/service/rest/v1/repositories/helm/hosted \
+  -u admin:$NEXUS_PASS \
   -X POST \
   -d '{"name":"helm","online":true,"storage":{"blobStoreName":"default","strictContentTypeValidation":true,"writePolicy":"allow_once"},"cleanup":{"policyNames":["string"]},"component":{"proprietaryComponents":true}}  ' \
   -H "Content-Type: application/json"
 
   # Package heml chart
   helm package mongodb/ --destination mongodb/charts
-
   # Uplopad helm chart
-  curl -v -u admin:admin123 http://$NEXUS_URL/repository/helm/ --upload-file mongodb/charts/mongodb-1.0.0.tgz
+  curl -v -u admin:$NEXUS_PASS http://$NEXUS_URL/repository/helm/ --upload-file mongodb/charts/mongodb-1.0.0.tgz
   ```
 
-- Install ArgoCD Operator:
+- Install ArgoCD:
 
   Follow [this instructions](https://docs.openshift.com/container-platform/4.8/cicd/gitops/installing-openshift-gitops.html).
 
@@ -57,7 +48,20 @@ Bookstore project using .Net Core or 6.
   oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops
 
   # Apply argo CD cluster configuration (including application namespaces)
+  oc apply -f cicd-resources/argo/init.yaml
   
+  ```
+
+- Configure Pipelines:
+  ```sh
+  # Configure policies
+  oc policy add-role-to-user edit system:serviceaccount:$cicd-resources:pipeline -n book-store-dev
+  oc policy add-role-to-user edit system:serviceaccount:cicd-resources:pipeline -n book-store-prod
+  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-dev:default -n cicd-resources
+  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-prod:default -n cicd-resources
+
+  # Add dotnet 6 is for S2I process
+  oc apply -f https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore/master/dotnet_imagestreams.json -n openshift
   ```
 
 ## OpenShift simple deployment

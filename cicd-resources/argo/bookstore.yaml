@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bookstore
+  namespace: openshift-gitops
+  # ONLY if you want these to cascade delete
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/clbartolome/bookstore-dotnet-6.git
+    targetRevision: master
+    path: cicd-resources/argo/app-sets
+  destination:
+    server: https://kubernetes.default.svc
+    namespace:  openshift-gitops
+  syncPolicy:
+    automated: {}
