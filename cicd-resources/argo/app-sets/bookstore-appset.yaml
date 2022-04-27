@@ -6,7 +6,7 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/clbartolome/bookstore-dotnet-6.git
-        revision: main
+        revision: master
         files:
           - path: "cicd-resources/argo/environments/*.json"
   template:
