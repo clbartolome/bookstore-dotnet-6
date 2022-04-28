@@ -1,7 +1,8 @@
-credentials:
-  username: user
-  userpassword: pass
+mongodb:
+  credentials:
+    username: user
+    userpassword: pass
 
-openshiftApplicationName: book-store
+  openshiftApplicationName: book-store
 
-fullnameOverride: book-store-mongo-prod
+  fullnameOverride: book-store-mongo-dev
