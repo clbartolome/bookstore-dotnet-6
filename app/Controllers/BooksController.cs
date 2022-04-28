@@ -18,7 +18,7 @@ public class BooksController : ControllerBase
         await _booksService.GetAsync();
 
     [HttpGet("api/greet")]
-    public async Task<ActionResult<string>> Get()
+    public async Task<ActionResult<string>> GetGreeting()
     {
 
         return "Welcome to Book Store!!";
