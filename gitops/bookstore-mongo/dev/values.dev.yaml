@@ -3,6 +3,6 @@ mongodb:
     username: user
     userpassword: pass
 
-  openshiftApplicationName: book-store
+  openshiftApplicationName: book-store-dev
 
   fullnameOverride: book-store-mongo-dev
