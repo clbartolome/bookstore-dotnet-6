@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: book-store-app
+  name: book-store-database
 spec:
   generators:
     - git:
@@ -11,13 +11,16 @@ spec:
           - path: "gitops/configuration/*.json"
   template:
     metadata:
-      name: 'book-store-app-{{ environment }}'
+      name: 'book-store-database-{{ environment }}'
     spec:
       project: default
       source:
         repoURL: https://github.com/clbartolome/bookstore-dotnet-6.git
         targetRevision: '{{ argo_config.branch }}'
-        path: 'gitops/bookstore/overlays/{{ environment }}'
+        path: 'gitops/bookstore-mongo/{{ environment }}'
+        helm:
+          valueFiles:
+            - values.{{ environment }}.yaml
       destination:
         server: '{{ k8s_cluster.address }}'
         namespace: '{{ k8s_cluster.namespace }}'

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: bookstore-mongo
+description: MongoDB for Book Store APP
+type: application
+version: 1.0.0
+appVersion: "5.0.7"
+dependencies:
+  - name: mongodb
+    version: 1.0.0
+    repository: http://nexus-cicd-resources.apps.cluster-pchw2.pchw2.sandbox1116.opentlc.com/repository/helm/

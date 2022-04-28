@@ -1,0 +1,7 @@
+credentials:
+  username: user
+  userpassword: pass
+
+openshiftApplicationName: book-store
+
+fullnameOverride: book-store-mongo-dev

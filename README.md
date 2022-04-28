@@ -51,6 +51,7 @@ Bookstore project using .Net Core or 6.
   oc apply -f cicd-resources/argo/init.yaml
 
   # Create Argo CD APP
+  # Before that, update nexus URL in charts (and commit changes): gitops/bookstore-mongo/**/Chart.yaml
   oc apply -f cicd-resources/argo/bookstore.yaml
   
   ```
