@@ -56,7 +56,10 @@ Bookstore project using .Net Core or 6.
   # Create Argo CD APP
   # !!!! Before that, update nexus URL in charts (and commit changes): gitops/bookstore-mongo/**/Chart.yaml
   oc apply -f cicd-resources/argo/bookstore.yaml
-  
+
+  # Allow acces to dev image and Start build manually
+  oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-prod:default -n book-store-dev  
+  oc start-build book-store-dev -n book-store-dev  
   ```
 
 - Configure Pipelines:

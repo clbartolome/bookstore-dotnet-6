@@ -8,7 +8,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: book-store:latest
+      name: book-store-dev:latest
   runPolicy: Serial
   source:
     contextDir: app
@@ -24,3 +24,6 @@ spec:
         namespace: openshift
     type: Source
   successfulBuildsHistoryLimit: 5
+  triggers: 
+  - type: "ConfigChange"
+

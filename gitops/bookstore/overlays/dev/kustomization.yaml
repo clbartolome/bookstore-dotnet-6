@@ -6,6 +6,7 @@ bases:
 
 resources:
 - bc.yaml
+- is.yaml
 
 nameSuffix: -dev
 
@@ -30,5 +31,5 @@ secretGenerator:
 
 images:
 - name: bookstore
-  newName: image-registry.openshift-image-registry.svc:5000/book-store-dev/book-store
+  newName: book-store-dev/book-store-dev
   newTag: latest
