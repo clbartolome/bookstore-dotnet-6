@@ -7,4 +7,4 @@ appVersion: "5.0.7"
 dependencies:
   - name: mongodb
     version: 1.0.0
-    repository: http://nexus-cicd-resources.apps.cluster-pchw2.pchw2.sandbox1116.opentlc.com/repository/helm/
+    repository: http://nexus-cicd-resources.apps.cluster-v4xnq.v4xnq.sandbox127.opentlc.com/repository/helm/
