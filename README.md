@@ -54,7 +54,7 @@ Bookstore project using .Net Core or 6.
   oc apply -f https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore/master/dotnet_imagestreams.json -n openshift
 
   # Create Argo CD APP
-  # Before that, update nexus URL in charts (and commit changes): gitops/bookstore-mongo/**/Chart.yaml
+  # !!!! Before that, update nexus URL in charts (and commit changes): gitops/bookstore-mongo/**/Chart.yaml
   oc apply -f cicd-resources/argo/bookstore.yaml
   
   ```

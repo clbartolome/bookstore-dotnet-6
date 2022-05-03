@@ -5,7 +5,6 @@ bases:
 - ../../base
 
 resources:
-- is.yaml
 - bc.yaml
 
 nameSuffix: -dev
