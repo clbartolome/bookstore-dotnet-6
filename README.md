@@ -50,6 +50,9 @@ Bookstore project using .Net Core or 6.
   # Apply argo CD cluster configuration (including application namespaces)
   oc apply -f cicd-resources/argo/init.yaml
 
+  # Add dotnet 6 is for S2I process
+  oc apply -f https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore/master/dotnet_imagestreams.json -n openshift
+
   # Create Argo CD APP
   # Before that, update nexus URL in charts (and commit changes): gitops/bookstore-mongo/**/Chart.yaml
   oc apply -f cicd-resources/argo/bookstore.yaml
@@ -64,8 +67,6 @@ Bookstore project using .Net Core or 6.
   oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-dev:default -n cicd-resources
   oc policy add-role-to-user system:image-puller system:serviceaccount:book-store-prod:default -n cicd-resources
 
-  # Add dotnet 6 is for S2I process
-  oc apply -f https://raw.githubusercontent.com/redhat-developer/s2i-dotnetcore/master/dotnet_imagestreams.json -n openshift
   ```
 
 ## OpenShift simple deployment

@@ -1,0 +1,26 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: book-store
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: book-store:latest
+  runPolicy: Serial
+  source:
+    contextDir: app
+    git:
+      ref: master
+      uri: https://github.com/clbartolome/bookstore-dotnet-6
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: dotnet:6.0-ubi8
+        namespace: openshift
+    type: Source
+  successfulBuildsHistoryLimit: 5

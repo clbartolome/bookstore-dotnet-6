@@ -4,6 +4,10 @@ kind: Kustomization
 bases:
 - ../../base
 
+resources:
+- is.yaml
+- bc.yaml
+
 nameSuffix: -dev
 
 commonLabels:
@@ -27,5 +31,5 @@ secretGenerator:
 
 images:
 - name: bookstore
-  newName: my-registry/bookstore
-  newTag: 1.0.0-snapshot
+  newName: image-registry.openshift-image-registry.svc:5000/book-store-dev/book-store
+  newTag: latest
