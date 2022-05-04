@@ -19,7 +19,12 @@ public class BooksService
         var mongoDbName = Environment.GetEnvironmentVariable("MONGO_DB_NAME");
         var mongoDbCollection = Environment.GetEnvironmentVariable("MONGO_DB_COLLECTION");
 
+        Console.WriteLine("Environment example from CM:-" + Environment.GetEnvironmentVariable("MONGO_HOST") + "-");
+        Console.WriteLine("Environment example from SEC:-" + Environment.GetEnvironmentVariable("MONGO_PASS") + "-");
+
+
         var connectionString = $"mongodb://{mongoUser}:{mongoPass}@{mongoHost}:{mongoPort}";
+        Console.WriteLine("Connection String:-" + connectionString + "-");
 
         var mongoClient = new MongoClient(connectionString);
 
